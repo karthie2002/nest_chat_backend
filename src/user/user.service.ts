@@ -7,7 +7,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
-  async create(createUserDto: CreateUserDto) {
+  async signUp(createUserDto: CreateUserDto) {
     try {
       const newUserData = await this.prismaService.user.create({
         data: {
