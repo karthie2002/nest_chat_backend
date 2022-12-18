@@ -4,4 +4,5 @@ export class CreateGroupDto {
   userIds: string[];
   @IsString()
   name: string;
+
 }

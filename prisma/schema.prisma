@@ -16,7 +16,7 @@ model User {
   password  String
   messages  Message[]
   group     Group[]   @relation(fields: [groupIds], references: [id])
-  groupIds  String[]  @db.ObjectId
+  groupIds  String[]  @db.ObjectId @unique
   createdAt DateTime  @default(now())
 }
 
@@ -25,7 +25,7 @@ model Group {
   user        User[]    @relation(fields: [userIds], references: [id])
   userIds     String[]  @db.ObjectId
   groupName   String    @unique
-  description String
+  description String?
   userJson    Json[]    @unique
   createdAt   DateTime  @default(now())
   messageId   Message[]

@@ -5,9 +5,10 @@ import {
 } from '@nestjs/websockets';
 import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
-
 import { WebSocketServer } from '@nestjs/websockets/decorators';
 import { Server, Socket } from 'socket.io';
+import { FetchGroupDto } from './dto/fetch-group.dto';
+import { Body } from '@nestjs/common';
 @WebSocketGateway({ cors: { origin: '*' } })
 export class GroupGateway {
   @WebSocketServer()
@@ -20,9 +21,9 @@ export class GroupGateway {
   }
 
 
-  @SubscribeMessage('findOneGroup')
-  findOne(@MessageBody() id: number) {
-    return this.groupService.findOne(id);
+  @SubscribeMessage('findAllUser')
+  findOne(@Body() body:FetchGroupDto) {
+    return this.groupService.findGroup(body);
   }
 
 }
