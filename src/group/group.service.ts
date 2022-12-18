@@ -6,6 +6,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 interface ConnectUser {
   id: string;
 }
+
 @Injectable()
 export class GroupService {
   constructor(private readonly prismaService: PrismaService) {}
