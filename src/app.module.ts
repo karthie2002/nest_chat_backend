@@ -6,9 +6,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { GroupModule } from './group/group.module';
 import { ConnectionModule } from './connection/connection.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
-  imports: [UserModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true }), GroupModule, ConnectionModule],
+  imports: [UserModule, PrismaModule, ConfigModule.forRoot({ isGlobal: true }), GroupModule, ConnectionModule, ChatModule],
   controllers: [AppController],
   providers: [AppService],
 })
