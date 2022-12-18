@@ -75,28 +75,30 @@ export class GroupService {
         id: fetchGroup.id,
       },
       select: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
         createdAt: true,
         description: true,
-        userIds: true,
       },
     });
-    const userData = await this.prismaService.user.findMany({
-      where: {
-        id: {
-          in: groupData.userIds,
-        },
-      },
-      select: {
-        username: true,
-        id:true,
-      },
-    });
+    // const userData = await this.prismaService.user.findMany({
+    //   where: {
+    //     id: {
+    //       in: groupData.userIds,
+    //     },
+    //   },
+    //   select: {
+    //     username: true,
+    //     id: true,
+    //   },
+    // });
     return {
-      userData,
-      groupData: {
-        createdAt: groupData.createdAt,
-        description: groupData.description,
-      },
+      // userData,
+      groupData,
     };
   }
 

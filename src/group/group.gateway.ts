@@ -9,7 +9,6 @@ import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { GatewayConnection } from 'src/connection/connection.gateway';
 import { FetchGroupDto } from './dto/fetch-group.dto';
-import { Body } from '@nestjs/common';
 @WebSocketGateway({ cors: { origin: '*' } })
 export class GroupGateway {
   @WebSocketServer()
