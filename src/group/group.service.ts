@@ -46,16 +46,22 @@ export class GroupService {
           }, {}),
         },
       });
-
       return { created: true, groupData };
     } catch (error) {
-      console.log('throw me');
-      throw new WsException('Group name already exists');
-
       if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
+        if (
+          error.code === 'P2002' &&
+          error.meta.target == 'Group_userJson_key'
+        ) {
+          throw new WsException(
+            'Cannot form multiple groups with the same users',
+          );
+        } else if (error.code === 'P2002') {
+          throw new WsException('Group name already exists');
+        } else if (error.code === 'P2022') {
+          throw new WsException('Invalid command');
         } else {
-          throw error;
+          throw new WsException('Invalid user');
         }
       } else {
         throw error;

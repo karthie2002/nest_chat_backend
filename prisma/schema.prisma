@@ -16,7 +16,7 @@ model User {
   password  String
   messages  Message[]
   group     Group[]   @relation(fields: [groupIds], references: [id])
-  groupIds  String[]  @db.ObjectId @unique
+  groupIds  String[]  @db.ObjectId 
   createdAt DateTime  @default(now())
 }
 
