@@ -34,6 +34,17 @@ export class UserService {
     }
   }
 
+  async fetchAllUsers() {
+    const fetchUsers = await this.prismaService.user.findMany({
+      select: {
+        username: true,
+        id: true,
+      },
+    });
+
+    return fetchUsers;
+  }
+
   async signIn(user: CreateUserDto) {
     try {
       const userData = await this.prismaService.user.findUniqueOrThrow({
