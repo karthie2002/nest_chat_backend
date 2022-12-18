@@ -22,12 +22,11 @@ export class GroupGateway {
 
   @SubscribeMessage('createGroup')
   async createGroup(@MessageBody() createGroupDto: CreateGroupDto) {
-    console.log('hello');
     return await this.groupService.createGroup(createGroupDto);
   }
 
-  @SubscribeMessage('findAllUser')
-  findOne(@Body() body: FetchGroupDto) {
-    return this.groupService.findGroup(body);
+  @SubscribeMessage('findGroup')
+  async findGroup(@MessageBody() body: FetchGroupDto) {
+    return await this.groupService.findGroup(body);
   }
 }

@@ -70,19 +70,37 @@ export class GroupService {
   }
 
   async findGroup(fetchGroup: FetchGroupDto) {
-    return await this.prismaService.user.findMany({
-      select: {
-        id: true,
-      },
+    const groupData = await this.prismaService.group.findUniqueOrThrow({
       where: {
-        id: {
-          notIn: fetchGroup.userIds,
-        },
+        id: fetchGroup.id,
+      },
+      select: {
+        createdAt: true,
+        description: true,
+        userIds: true,
       },
     });
+    const userData = await this.prismaService.user.findMany({
+      where: {
+        id: {
+          in: groupData.userIds,
+        },
+      },
+      select: {
+        username: true,
+        id:true,
+      },
+    });
+    return {
+      userData,
+      groupData: {
+        createdAt: groupData.createdAt,
+        description: groupData.description,
+      },
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} group`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} group`;
+  // }
 }
