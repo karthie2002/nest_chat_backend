@@ -53,7 +53,7 @@ export class UserService {
         },
       });
       if (userData.password == user.password) {
-        return { verified: true };
+        return { verified: true, userData: userData.id };
       } else {
         return { verified: false };
       }
@@ -61,10 +61,13 @@ export class UserService {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
           throw new HttpException(
-            {
-              status: HttpStatus.FORBIDDEN,
-              message: ['Login Failed'],
-            },
+            [
+              { verified: false },
+              {
+                status: HttpStatus.FORBIDDEN,
+                message: ['Login Failed'],
+              },
+            ],
             HttpStatus.FORBIDDEN,
           );
         }

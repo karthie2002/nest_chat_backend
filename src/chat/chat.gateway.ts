@@ -38,7 +38,7 @@ export class ChatGateway implements OnGatewayInit {
     client.join(room);
     client.emit('joined', room);
   }
-  @SubscribeMessage('joinRoom')
+  @SubscribeMessage('leaveRoom')
   handleLeaveRoom(client: Socket, room: string) {
     client.leave(room);
     client.emit('left', room);
