@@ -10,10 +10,3 @@ export class CreateGroupDto {
   name: string;
 }
 
-export class FetchGroupDto {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(24)
-  @MinLength(24)
-  id: string;
-}

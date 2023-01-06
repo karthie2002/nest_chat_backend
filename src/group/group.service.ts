@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGroupDto, FetchGroupDto } from './dto/create-group.dto';
+import { CreateGroupDto } from './dto/create-group.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { WebSocketServer, WsException } from '@nestjs/websockets';
+import { FetchAllGroupsDto, FetchOneGroupDto } from './dto/fetch-group.dto';
 
 interface ConnectUser {
   id: string;
@@ -13,7 +14,7 @@ export class GroupService {
   client: any;
   constructor(private readonly prismaService: PrismaService) {}
 
-  //Create a new group - group/createGroup
+  //Create a new group - createGroup
   async createGroup(group: CreateGroupDto) {
     const sorted = [...group.userIds].sort();
     let connectUser: ConnectUser[] = [];
@@ -57,26 +58,44 @@ export class GroupService {
     }
   }
 
-  //Return a group details - group/findGroup
-  async findGroup(fetchGroup: FetchGroupDto) {
-    const groupData = await this.prismaService.group.findUniqueOrThrow({
+  //!Last received msg
+  //All groups in which user exists - fetchAllGroups
+  async fetchAllGroups(userId: FetchAllGroupsDto) {
+    const groups = await this.prismaService.group.findMany({
       where: {
-        id: fetchGroup.id,
+        userIds: {
+          has: userId.userId,
+        },
       },
       select: {
-        user: {
+        id: true,
+        groupName: true,
+        messageId: {
           select: {
-            id: true,
-            username: true,
+            createdAt: true,
+            content: true,
+            groupId: true,
           },
         },
-        createdAt: true,
-        description: true,
       },
     });
+    console.log(groups);
+    return groups;
+  }
 
-    return {
-      groupData,
-    };
+  async fetchOneGroup(body: FetchOneGroupDto) {
+    const groupData = await this.prismaService.group.findUniqueOrThrow({
+      where: {
+        id: body.groupId,
+      },
+      select: {
+        groupName: true,
+        description: true,
+        messageId: true,
+        userIds: true,
+      },
+    });
+    console.log(groupData);
+    return groupData;
   }
 }

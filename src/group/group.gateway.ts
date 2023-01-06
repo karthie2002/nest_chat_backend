@@ -6,8 +6,9 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { GroupService } from './group.service';
-import { CreateGroupDto, FetchGroupDto } from './dto/create-group.dto';
+import { CreateGroupDto } from './dto/create-group.dto';
 import { GatewayConnection } from 'src/connection/connection.gateway';
+import { FetchAllGroupsDto, FetchOneGroupDto } from './dto/fetch-group.dto';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class GroupGateway {
@@ -18,15 +19,18 @@ export class GroupGateway {
     private readonly app: GatewayConnection,
   ) {}
 
-  
   @SubscribeMessage('createGroup')
   async createGroup(@MessageBody() createGroupDto: CreateGroupDto) {
     return await this.groupService.createGroup(createGroupDto);
   }
 
-  @SubscribeMessage('findGroup')
-  async findGroup(@MessageBody() body: FetchGroupDto) {
-    console.log(body);
-    return await this.groupService.findGroup(body);
+  @SubscribeMessage('fetchAllGroups')
+  async fetchAllGroups(@MessageBody() userId: FetchAllGroupsDto) {
+    return await this.groupService.fetchAllGroups(userId);
+  }
+
+  @SubscribeMessage('fetchOneGroup')
+  async fetchOneGroup(@MessageBody() userId: FetchOneGroupDto) {
+    return await this.groupService.fetchOneGroup(userId);
   }
 }
