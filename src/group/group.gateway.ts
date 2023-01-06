@@ -9,6 +9,8 @@ import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { GatewayConnection } from 'src/connection/connection.gateway';
 import { FetchAllGroupsDto, FetchOneGroupDto } from './dto/fetch-group.dto';
+import { DeleteGroupDto } from './dto/delete-group.dto';
+import { AddDelUserDto } from './dto/users-group.dto';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class GroupGateway {
@@ -30,7 +32,18 @@ export class GroupGateway {
   }
 
   @SubscribeMessage('fetchOneGroup')
-  async fetchOneGroup(@MessageBody() userId: FetchOneGroupDto) {
-    return await this.groupService.fetchOneGroup(userId);
+  async fetchOneGroup(@MessageBody() body: FetchOneGroupDto) {
+    return await this.groupService.fetchOneGroup(body);
+  }
+
+  @SubscribeMessage('deleteGroup')
+  async deleteGroup(@MessageBody() body: DeleteGroupDto) {
+    return await this.groupService.deleteGroup(body);
+  }
+
+  @SubscribeMessage('addUserToGroup')
+  async addUserToGroup(@MessageBody() body: AddDelUserDto) {
+    return await this.groupService.addUserToGroup(body);
+
   }
 }

@@ -7,6 +7,5 @@ export class CreateGroupDto {
 
   @IsNotEmpty()
   @IsString()
-  name: string;
+  grpName: string;
 }
-

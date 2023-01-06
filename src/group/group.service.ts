@@ -4,6 +4,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { WebSocketServer, WsException } from '@nestjs/websockets';
 import { FetchAllGroupsDto, FetchOneGroupDto } from './dto/fetch-group.dto';
+import { DeleteGroupDto } from './dto/delete-group.dto';
+import { AddDelUserDto } from './dto/users-group.dto';
+import { group } from 'console';
 
 interface ConnectUser {
   id: string;
@@ -98,4 +101,54 @@ export class GroupService {
     console.log(groupData);
     return groupData;
   }
+
+  // ! Messages in that grp to be deleted
+  //Delete one group - deleteGroup
+  async deleteGroup(body: DeleteGroupDto) {
+    const groupData = this.prismaService.group.delete({
+      where: {
+        id: body.groupId,
+      },
+      select: {
+        id: true,
+        groupName: true,
+        user: true,
+      },
+    });
+    console.log(groupData);
+  }
+  // const users = groupData;
+  // const usersData = await this.prismaService.user.update({
+  //   where: {},
+  //   data: {},
+  // });
+
+  // for (let i = 0; i < usersData.length; i++) {
+  //   let obj = usersData[i];
+  //   for (var j = 0; j < obj.groupIds.length; j++) {
+  //     if (obj[j] === body.groupId) {
+  //       obj.groupIds.splice(j, 1);
+  //     }
+  //   }
+  //   console.log(obj);
+  // for (const groupId in obj.groupIds) {
+  //   if (groupId == body.groupId) {
+
+  //     // console.log(obj.groupIds);
+  //   }
+  // }
+
+  // const groupData = this.prismaService.group.delete({
+  //   where: {
+  //     id: body.groupId,
+  //   },
+  //   select: {
+  //     id: true,
+  //     groupName: true,
+  //     user: true,
+  //   },
+  // });
+  // return groupData;
+
+  async addUserToGroup(body: AddDelUserDto) {}
 }
