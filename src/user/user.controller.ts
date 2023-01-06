@@ -7,17 +7,17 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signupUser')
-  signUp(@Body() user: CreateUserDto) {
-    return this.userService.signUp(user);
+  async signUpUser(@Body() user: CreateUserDto) {
+    return await this.userService.signUpUser(user);
   }
 
   @Post('signinUser')
-  signIn(@Body() user: CreateUserDto) {
-    return this.userService.signIn(user);
+  async signInUser(@Body() user: CreateUserDto) {
+    return await this.userService.signInUser(user);
   }
 
-  @Get('findAllUsers')
-  fetchAllUsers() {
-    return this.userService.fetchAllUsers();
+  @Get('fetchAllUsers')
+  async fetchAllUsers() {
+    return await this.userService.fetchAllUsers();
   }
 }

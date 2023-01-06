@@ -6,7 +6,9 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
-  async signUp(createUserDto: CreateUserDto) {
+
+  //Signin new user - user/signupUser
+  async signUpUser(createUserDto: CreateUserDto) {
     try {
       const newUserData = await this.prismaService.user.create({
         data: {
@@ -34,18 +36,27 @@ export class UserService {
     }
   }
 
+  // ! last received msg to be added
+  //Get all users (for homepage display) - user/fetchAllUsers
   async fetchAllUsers() {
     const fetchUsers = await this.prismaService.user.findMany({
       select: {
         username: true,
         id: true,
+        messages: {
+          select: {
+            createdAt: true,
+            content: true,
+            groupId: true,
+          },
+        },
       },
     });
-
     return fetchUsers;
   }
 
-  async signIn(user: CreateUserDto) {
+  //Signin existing user - user/signinUser
+  async signInUser(user: CreateUserDto) {
     try {
       const userData = await this.prismaService.user.findUniqueOrThrow({
         where: {
@@ -55,9 +66,23 @@ export class UserService {
       if (userData.password == user.password) {
         return { verified: true, userData: userData.id };
       } else {
-        return { verified: false };
+        throw new HttpException('unauthorised', HttpStatus.UNAUTHORIZED);
       }
     } catch (error) {
+      if (error instanceof HttpException) {
+        if (error.getStatus() == HttpStatus.UNAUTHORIZED) {
+          throw new HttpException(
+            [
+              { verified: false },
+              {
+                status: HttpStatus.UNAUTHORIZED,
+                message: ['Login failed'],
+              },
+            ],
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      }
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
           throw new HttpException(
@@ -65,7 +90,7 @@ export class UserService {
               { verified: false },
               {
                 status: HttpStatus.FORBIDDEN,
-                message: ['Login Failed'],
+                message: ['Username invalid'],
               },
             ],
             HttpStatus.FORBIDDEN,
