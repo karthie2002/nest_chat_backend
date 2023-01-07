@@ -19,9 +19,8 @@ export class ChatGateway {
 
   @SubscribeMessage('chatToServer')
   async handleMessage(@MessageBody() message: CreateChatDto) {
-    this.wss.sockets
-      .to(message.groupId)
-      .emit('chatToClient', await this.chatService.createMessage(message));
+    const data = await this.chatService.createMessage(message);
+    this.wss.sockets.to(message.groupId).emit('chatToClient', data);
   }
 
   // @SubscribeMessage('findAllChat')
@@ -31,6 +30,7 @@ export class ChatGateway {
 
   @SubscribeMessage('joinRoom')
   handleJoinRoom(@ConnectedSocket() client: Socket, room: JoinRoomDto) {
+    console.log(room);
     client.join(room.groupId);
     client.emit('joined', room.groupId);
   }
