@@ -6,7 +6,6 @@ import { WebSocketServer, WsException } from '@nestjs/websockets';
 import { FetchAllGroupsDto, FetchOneGroupDto } from './dto/fetch-group.dto';
 import { DeleteGroupDto } from './dto/delete-group.dto';
 import { AddDelUserDto } from './dto/users-group.dto';
-import { group } from 'console';
 
 interface ConnectUser {
   id: string;
@@ -28,7 +27,7 @@ export class GroupService {
       const groupData = await this.prismaService.group.create({
         data: {
           userIds: group.userIds,
-          groupName: group.name,
+          groupName: group.grpName,
           user: {
             connect: connectUser,
           },
@@ -64,42 +63,67 @@ export class GroupService {
   //!Last received msg
   //All groups in which user exists - fetchAllGroups
   async fetchAllGroups(userId: FetchAllGroupsDto) {
-    const groups = await this.prismaService.group.findMany({
-      where: {
-        userIds: {
-          has: userId.userId,
-        },
-      },
-      select: {
-        id: true,
-        groupName: true,
-        messageId: {
-          select: {
-            createdAt: true,
-            content: true,
-            groupId: true,
+    try {
+      const groups = await this.prismaService.group.findMany({
+        where: {
+          userIds: {
+            has: userId.userId,
           },
         },
-      },
-    });
-    console.log(groups);
-    return groups;
+        select: {
+          id: true,
+          groupName: true,
+          messageId: {
+            select: {
+              createdAt: true,
+              content: true,
+              groupId: true,
+            },
+          },
+        },
+      });
+      console.log(groups);
+      return groups;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2023') {
+          throw new WsException('Unknown error!!');
+        } else {
+          throw new WsException('Unknown error!!');
+        }
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
   }
 
   async fetchOneGroup(body: FetchOneGroupDto) {
-    const groupData = await this.prismaService.group.findUniqueOrThrow({
-      where: {
-        id: body.groupId,
-      },
-      select: {
-        groupName: true,
-        description: true,
-        messageId: true,
-        userIds: true,
-      },
-    });
-    console.log(groupData);
-    return groupData;
+    try {
+      const groupData = await this.prismaService.group.findUniqueOrThrow({
+        where: {
+          id: body.groupId,
+        },
+        select: {
+          groupName: true,
+          description: true,
+          messageId: true,
+          userIds: true,
+        },
+      });
+      console.log(groupData);
+      return groupData;
+    } catch (error) {
+      console.log(error);
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2023') {
+          throw new WsException('Group does not exist');
+        } else {
+          throw new WsException('Unknown error!!');
+        }
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
   }
 
   // ! Messages in that grp to be deleted
