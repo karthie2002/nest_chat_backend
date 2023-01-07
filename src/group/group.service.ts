@@ -82,7 +82,6 @@ export class GroupService {
           },
         },
       });
-      console.log(groups);
       return groups;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -110,10 +109,8 @@ export class GroupService {
           userIds: true,
         },
       });
-      console.log(groupData);
       return groupData;
     } catch (error) {
-      console.log(error);
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2023') {
           throw new WsException('Group does not exist');
