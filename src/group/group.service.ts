@@ -73,7 +73,7 @@ export class GroupService {
         select: {
           id: true,
           groupName: true,
-          messageId: {
+          messages: {
             select: {
               createdAt: true,
               content: true,
@@ -105,7 +105,7 @@ export class GroupService {
         select: {
           groupName: true,
           description: true,
-          messageId: true,
+          messages: true,
           userIds: true,
         },
       });
@@ -126,23 +126,37 @@ export class GroupService {
   // ! Messages in that grp to be deleted
   //Delete one group - deleteGroup
   async deleteGroup(body: DeleteGroupDto) {
-    const groupData = this.prismaService.group.delete({
-      where: {
-        id: body.groupId,
-      },
-      select: {
-        id: true,
-        groupName: true,
-        user: true,
-      },
-    });
-    console.log(groupData);
+    try {
+      const groupData = await this.prismaService.group.delete({
+        where: {
+          id: body.groupId,
+        },
+        select: {
+          id: true,
+          groupName: true,
+          user: true,
+        },
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new WsException('Group does not exist');
+        } else {
+          throw new WsException('Unknown error!!');
+        }
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
+    // const usersData = await this.prismaService.user.updateMany({
+    //   where: {
+    //     groupIds: {
+    //       has: body.groupId,
+    //     },
+    //   },
+    //   data: {},
+    // });
   }
-  // const users = groupData;
-  // const usersData = await this.prismaService.user.update({
-  //   where: {},
-  //   data: {},
-  // });
 
   // for (let i = 0; i < usersData.length; i++) {
   //   let obj = usersData[i];
@@ -154,22 +168,8 @@ export class GroupService {
   //   console.log(obj);
   // for (const groupId in obj.groupIds) {
   //   if (groupId == body.groupId) {
-
-  //     // console.log(obj.groupIds);
   //   }
   // }
-
-  // const groupData = this.prismaService.group.delete({
-  //   where: {
-  //     id: body.groupId,
-  //   },
-  //   select: {
-  //     id: true,
-  //     groupName: true,
-  //     user: true,
-  //   },
-  // });
-  // return groupData;
 
   async addUserToGroup(body: AddDelUserDto) {}
 }
