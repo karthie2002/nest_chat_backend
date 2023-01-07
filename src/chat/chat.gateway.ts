@@ -29,7 +29,7 @@ export class ChatGateway {
   // }
 
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(@ConnectedSocket() client: Socket, room: JoinRoomDto) {
+  handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() room: JoinRoomDto) {
     console.log(room);
     client.join(room.groupId);
     client.emit('joined', room.groupId);
