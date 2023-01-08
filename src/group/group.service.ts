@@ -179,33 +179,46 @@ export class GroupService {
   async addUserToGroup(body: AddDelUserDto) {}
 
   // ! Yet to be done
+  // ! Dont use this endpoint
   async delUserFromGroup(body: AddDelUserDto) {
-    const userData = await this.prismaService.user.findUniqueOrThrow({
-      where: {
-        id: body.userId,
-      },
-      select: {
-        groupIds: true,
-        id: true,
-        username: true,
-      },
-    });
-    if (userData.groupIds.includes(body.groupId)) {
-      const groupData = await this.prismaService.group.update({
+    try {
+      const userData = await this.prismaService.user.findUniqueOrThrow({
         where: {
-          id: body.groupId,
+          id: body.userId,
         },
-        data: {
-          user: {
-            delete: {
-              id: body.userId,
-            },
-          },
+        select: {
+          groupIds: true,
+          id: true,
+          username: true,
         },
       });
-      return groupData;
-    } else {
-      throw new WsException('Cannot form multiple groups with the same users');
+      if (userData.groupIds.includes(body.groupId)) {
+        const groupData = await this.prismaService.group.update({
+          where: {
+            id: body.groupId,
+          },
+          data: {
+            userJson: {
+              delete: {
+                id: body.userId,
+              },
+            },
+          },
+        });
+        return groupData;
+      } else {
+        throw new WsException('error');
+      }
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new WsException('User does not exist');
+        } else {
+          throw new WsException('Unknown error!!');
+        }
+      } else {
+        throw new WsException('Unknown error!!');
+      }
     }
   }
 }

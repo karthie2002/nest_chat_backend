@@ -48,8 +48,9 @@ export class GroupGateway {
     return await this.groupService.addUserToGroup(body);
   }
 
+  // ! Dont use this endpoint
   // ! to be changed
-  @SubscribeMessage('addUserToGroup')
+  @SubscribeMessage('delUserFromGroup')
   async delUserFromGroup(@MessageBody() body: AddDelUserDto) {
     return await this.groupService.delUserFromGroup(body);
   }

@@ -13,88 +13,120 @@ export class ChatService {
 
   //Sending a new message to a group(room) - chatToServer
   async createMessage(message: CreateChatDto) {
-    const messageData = await this.prismaService.message.create({
-      data: {
-        content: message.content,
-        msgRead: false,
-        group: {
-          connect: {
-            id: message.groupId,
+    try {
+      const messageData = await this.prismaService.message.create({
+        data: {
+          content: message.content,
+          msgRead: false,
+          group: {
+            connect: {
+              id: message.groupId,
+            },
+          },
+          user: {
+            connect: {
+              id: message.userId,
+            },
           },
         },
-        user: {
-          connect: {
-            id: message.userId,
+        select: {
+          groupId: true,
+          content: true,
+          createdAt: true,
+          msgRead: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
           },
         },
-      },
-      select: {
-        groupId: true,
-        content: true,
-        createdAt: true,
-        msgRead: true,
-        user: {
-          select: {
-            id: true,
-            username: true,
-          },
-        },
-      },
-    });
-    return messageData;
+      });
+      return messageData;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new WsException('Message not sent!!');
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
   }
 
   //Fetches all the messages in a group(room) - fetchAllMessages
   async fetchAllMessages(fetchAllMessagesDto: FetchAllMessagesDto) {
-    const messages = await this.prismaService.message.findMany({
-      where: {
-        groupId: fetchAllMessagesDto.groupId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      select: {
-        content: true,
-        createdAt: true,
-        user: {
-          select: {
-            id: true,
-            username: true,
-          },
+    try {
+      const messages = await this.prismaService.message.findMany({
+        where: {
+          groupId: fetchAllMessagesDto.groupId,
         },
-        msgRead: true,
-      },
-    });
-    return messages;
+        orderBy: {
+          createdAt: 'desc',
+        },
+        select: {
+          content: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+          msgRead: true,
+        },
+      });
+      return messages;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new WsException('Unable to fetch messages!!');
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
   }
 
   //Edit an already existing message - editMessage
   async updateMessage(updateChatDto: UpdateMessageDto) {
-    const messageData = await this.prismaService.message.update({
-      where: {
-        id: updateChatDto.messageId,
-      },
-      data: {
-        content: updateChatDto.updatedContent,
-      },
-      select: {
-        content: true,
-        createdAt: true,
-        id: true,
-        groupId: true,
-        userId: true,
-        msgRead: true,
-      },
-    });
-    return messageData;
+    try {
+      const messageData = await this.prismaService.message.update({
+        where: {
+          id: updateChatDto.messageId,
+        },
+        data: {
+          content: updateChatDto.updatedContent,
+        },
+        select: {
+          content: true,
+          createdAt: true,
+          id: true,
+          groupId: true,
+          userId: true,
+          msgRead: true,
+        },
+      });
+      return messageData;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new WsException('Message not updated!!');
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
   }
 
   //Delete a message - deleteMessage
   async deleteMessage(message: DeleteMessageDto) {
-    await this.prismaService.message.delete({
-      where: {
-        id: message.messageId,
-      },
-    });
+    try {
+      await this.prismaService.message.delete({
+        where: {
+          id: message.messageId,
+        },
+      });
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new WsException('Message not deleted!!');
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
   }
 }
