@@ -1,13 +1,11 @@
 import { Global, OnModuleInit } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+} from '@nestjs/websockets/interfaces';
 
 import { Server, Socket } from 'socket.io';
-import { CreateGroupDto } from 'src/group/dto/create-group.dto';
 
 @Global()
 @WebSocketGateway({
@@ -15,7 +13,9 @@ import { CreateGroupDto } from 'src/group/dto/create-group.dto';
     origin: '*',
   },
 })
-export class GatewayConnection implements OnModuleInit {
+export class GatewayConnection
+  implements OnModuleInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer()
   server: Server;
 
@@ -40,12 +40,12 @@ export class GatewayConnection implements OnModuleInit {
     });
   }
 
-  // handleConnection() {
-  //   console.log('Conn handled!!');
-  //   this.server.emit('handleConn', 'connection handled');
-  // }
-  // handleDisconnect() {
-  //   console.log('disconnected!!');
-  //   this.server.emit('disconnect', 'disconnected from server');
-  // }
+  handleConnection() {
+    console.log('Conn handled!!');
+    this.server.emit('handleConn', 'connection handled');
+  }
+  handleDisconnect() {
+    console.log('disconnected!!');
+    this.server.emit('disconnected', 'disconnected from server');
+  }
 }

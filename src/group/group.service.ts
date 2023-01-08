@@ -72,11 +72,6 @@ export class GroupService {
         select: {
           id: true,
           groupName: true,
-          _count: {
-            select: {
-              messages: false,
-            },
-          },
           messages: {
             orderBy: {
               createdAt: 'desc',
@@ -92,14 +87,15 @@ export class GroupService {
       });
       return groups;
     } catch (error) {
+      console.log(error);
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2023') {
           throw new WsException('No groups found!!');
         } else {
-          throw new WsException('Unknown error!!');
+          throw new WsException('hello');
         }
       } else {
-        throw new WsException('Unknown error!!');
+        throw new WsException('hi');
       }
     }
   }
