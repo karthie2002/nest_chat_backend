@@ -43,13 +43,7 @@ export class UserService {
       select: {
         username: true,
         id: true,
-        messages: {
-          select: {
-            createdAt: true,
-            content: true,
-            groupId: true,
-          },
-        },
+        createdAt: true,
       },
     });
     return fetchUsers;
