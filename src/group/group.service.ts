@@ -72,6 +72,11 @@ export class GroupService {
         select: {
           id: true,
           groupName: true,
+          _count: {
+            select: {
+              messages: false,
+            },
+          },
           messages: {
             orderBy: {
               createdAt: 'desc',
@@ -80,7 +85,6 @@ export class GroupService {
             select: {
               createdAt: true,
               content: true,
-              groupId: true,
             },
           },
         },

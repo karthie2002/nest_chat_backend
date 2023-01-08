@@ -12,7 +12,7 @@ import { ChatService } from './chat.service';
 import { CreateChatDto, JoinLeaveRoomDto } from './dto/create-chat.dto';
 import { DeleteMessageDto } from './dto/delete-chat.dto';
 import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
-import { UpdateMessageDto } from './dto/update-chat.dto';
+import { UpdateMessageDto, MessageReadDto } from './dto/update-chat.dto';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
@@ -66,4 +66,9 @@ export class ChatGateway {
   async deleteMessage(@MessageBody() message: DeleteMessageDto) {
     return await this.chatService.deleteMessage(message);
   }
+
+  // @SubscribeMessage('messageRead')
+  // async messageRead(@MessageBody() messageReadDto: MessageReadDto) {
+  //   return await this.chatService.messageRead(messageReadDto);
+  // }
 }

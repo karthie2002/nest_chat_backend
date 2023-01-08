@@ -5,7 +5,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { WebSocketServer, WsException } from '@nestjs/websockets';
 import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
 import { DeleteMessageDto } from './dto/delete-chat.dto';
-import { UpdateMessageDto } from './dto/update-chat.dto';
+import { UpdateMessageDto, MessageReadDto } from './dto/update-chat.dto';
 @Injectable()
 export class ChatService {
   client: any;
@@ -55,26 +55,34 @@ export class ChatService {
   //Fetches all the messages in a group(room) - fetchAllMessages
   async fetchAllMessages(fetchAllMessagesDto: FetchAllMessagesDto) {
     try {
-      const messages = await this.prismaService.message.findMany({
+      const readMessagesData = await this.prismaService.message.updateMany({
+        where: {
+          AND: [{ groupId: fetchAllMessagesDto.groupId }, { msgRead: false }],
+        },
+        data: {
+          msgRead: true,
+        },
+      });
+      const allMessages = await this.prismaService.message.findMany({
         where: {
           groupId: fetchAllMessagesDto.groupId,
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: 'asc',
         },
         select: {
           content: true,
           createdAt: true,
+          msgRead: true,
           user: {
             select: {
               id: true,
               username: true,
             },
           },
-          msgRead: true,
         },
       });
-      return messages;
+      return { readMessagesData, allMessages };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw new WsException('Unable to fetch messages!!');
@@ -129,4 +137,8 @@ export class ChatService {
       }
     }
   }
+
+  // async messageRead(messageReadDto: MessageReadDto) {
+  //   return await this.prismaService;
+  // }
 }

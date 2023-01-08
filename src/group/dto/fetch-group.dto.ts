@@ -8,6 +8,7 @@ export class FetchAllGroupsDto {
   userId: string;
 }
 
+// ! not used
 export class FetchOneGroupDto {
   @IsString()
   @IsNotEmpty()
