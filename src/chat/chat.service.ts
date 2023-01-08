@@ -55,34 +55,36 @@ export class ChatService {
   //Fetches all the messages in a group(room) - fetchAllMessages
   async fetchAllMessages(fetchAllMessagesDto: FetchAllMessagesDto) {
     try {
-      const readMessagesData = await this.prismaService.message.updateMany({
-        where: {
-          AND: [{ groupId: fetchAllMessagesDto.groupId }, { msgRead: false }],
-        },
-        data: {
-          msgRead: true,
-        },
-      });
-      const allMessages = await this.prismaService.message.findMany({
-        where: {
-          groupId: fetchAllMessagesDto.groupId,
-        },
-        orderBy: {
-          createdAt: 'asc',
-        },
-        select: {
-          content: true,
-          createdAt: true,
-          msgRead: true,
-          user: {
-            select: {
-              id: true,
-              username: true,
+      return await this.prismaService.$transaction(async (tx) => {
+        const readMessagesData = await tx.message.updateMany({
+          where: {
+            AND: [{ groupId: fetchAllMessagesDto.groupId }, { msgRead: false }],
+          },
+          data: {
+            msgRead: true,
+          },
+        });
+        const allMessages = await tx.message.findMany({
+          where: {
+            groupId: fetchAllMessagesDto.groupId,
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+          select: {
+            content: true,
+            createdAt: true,
+            msgRead: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+              },
             },
           },
-        },
+        });
+        return { readMessagesData, allMessages };
       });
-      return { readMessagesData, allMessages };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw new WsException('Unable to fetch messages!!');
