@@ -22,7 +22,7 @@ export class GatewayConnection implements OnModuleInit {
 
   onModuleInit() {
     this.server.on('connection', (client: Socket) => {
-      console.log(client);
+      // console.log(client);
       if (
         client.handshake.headers.senderid != undefined &&
         String(client.handshake.headers.senderid) != ''
