@@ -60,7 +60,6 @@ export class GroupService {
     }
   }
 
-  //!Last received msg
   //All groups in which user exists - fetchAllGroups
   async fetchAllGroups(userId: FetchAllGroupsDto) {
     try {
@@ -74,6 +73,10 @@ export class GroupService {
           id: true,
           groupName: true,
           messages: {
+            orderBy: {
+              createdAt: 'desc',
+            },
+            take: 1,
             select: {
               createdAt: true,
               content: true,

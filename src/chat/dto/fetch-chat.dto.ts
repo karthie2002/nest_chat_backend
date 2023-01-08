@@ -1,6 +1,6 @@
 import { MaxLength, MinLength, IsString, IsNotEmpty } from 'class-validator';
 
-export class CreateChatDto {
+export class FetchAllMessagesDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(24)
@@ -12,17 +12,5 @@ export class CreateChatDto {
   @MaxLength(24)
   @MinLength(24)
   groupId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
-  content: string;
 }
 
-export class JoinLeaveRoomDto {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(24)
-  @MinLength(24)
-  groupId: string;
-}

@@ -31,6 +31,7 @@ export class GroupGateway {
     return await this.groupService.fetchAllGroups(userId);
   }
 
+  // ! Redundancy - same as fetchAllMessages
   @SubscribeMessage('fetchOneGroup')
   async fetchOneGroup(@MessageBody() body: FetchOneGroupDto) {
     return await this.groupService.fetchOneGroup(body);
@@ -44,6 +45,5 @@ export class GroupGateway {
   @SubscribeMessage('addUserToGroup')
   async addUserToGroup(@MessageBody() body: AddDelUserDto) {
     return await this.groupService.addUserToGroup(body);
-
   }
 }

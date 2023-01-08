@@ -62,11 +62,22 @@ export class UserService {
         where: {
           username: user.username,
         },
+        select: {
+          username: true,
+          id: true,
+          createdAt: true,
+          password: true,
+        },
       });
       if (userData.password == user.password) {
-        return { verified: true, userData: userData.id };
+        return {
+          verified: true,
+          userId: userData.id,
+          username: userData.username,
+          createdAt: userData.createdAt,
+        };
       } else {
-        throw new HttpException('unauthorised', HttpStatus.UNAUTHORIZED);
+        throw new HttpException('Unauthorised', HttpStatus.UNAUTHORIZED);
       }
     } catch (error) {
       if (error instanceof HttpException) {

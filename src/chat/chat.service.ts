@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { WebSocketServer, WsException } from '@nestjs/websockets';
+import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
+import { DeleteMessageDto } from './dto/delete-chat.dto';
+import { UpdateMessageDto } from './dto/update-chat.dto';
 @Injectable()
 export class ChatService {
   client: any;
   constructor(private readonly prismaService: PrismaService) {}
 
+  //Sending a new message to a group(room) - chatToServer
   async createMessage(message: CreateChatDto) {
     const messageData = await this.prismaService.message.create({
       data: {
@@ -26,6 +29,7 @@ export class ChatService {
         },
       },
       select: {
+        groupId: true,
         content: true,
         createdAt: true,
         msgRead: true,
@@ -40,19 +44,40 @@ export class ChatService {
     return messageData;
   }
 
-  findAll() {
-    return `This action returns all chat`;
+  //Fetches all the messages in a group(room) - fetchAllMessages
+  async fetchAllMessages(fetchAllMessagesDto: FetchAllMessagesDto) {
+    const messages = await this.prismaService.message.findMany({
+      where: {
+        groupId: fetchAllMessagesDto.groupId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        content: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        msgRead: true,
+      },
+    });
+    return messages;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
+  async updateMessage(updateChatDto: UpdateMessageDto) {
+    return await this.prismaService;
   }
 
-  update(id: number, updateChatDto: UpdateChatDto) {
-    return `This action updates a #${id} chat`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+  //Delete a message - deleteMessage
+  async deleteMessage(message: DeleteMessageDto) {
+    await this.prismaService.message.delete({
+      where: {
+        id: message.messageId,
+      },
+    });
   }
 }

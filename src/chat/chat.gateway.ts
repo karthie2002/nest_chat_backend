@@ -9,45 +9,60 @@ import {
 import { Socket, Server } from 'socket.io';
 
 import { ChatService } from './chat.service';
-import { CreateChatDto, JoinRoomDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+import { CreateChatDto, JoinLeaveRoomDto } from './dto/create-chat.dto';
+import { DeleteMessageDto } from './dto/delete-chat.dto';
+import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
+import { UpdateMessageDto } from './dto/update-chat.dto';
+
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
   @WebSocketServer() wss: Server;
-
   constructor(private readonly chatService: ChatService) {}
 
+  //Sending a new message to a group(room)
   @SubscribeMessage('chatToServer')
   async handleMessage(@MessageBody() message: CreateChatDto) {
     const data = await this.chatService.createMessage(message);
     this.wss.sockets.to(message.groupId).emit('chatToClient', data);
   }
 
-  // @SubscribeMessage('findAllChat')
-  // findAll() {
-  //   return this.chatService.findAll();
-  // }
+  //Fetches all the messages in a group(room) - fetchAllMessages
+  @SubscribeMessage('fetchAllMessages')
+  async findAll(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() fetchAllMessagesDto: FetchAllMessagesDto,
+  ) {
+    const data = await this.chatService.fetchAllMessages(fetchAllMessagesDto);
+    return data;
+  }
 
+  // ! group id to be sent, last seen
+  //Clicking on a group/ entering a room
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() room: JoinRoomDto) {
+  handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: JoinLeaveRoomDto,
+  ) {
     console.log(room);
     client.join(room.groupId);
     client.emit('joined', room.groupId);
   }
 
+  //Exiting from a group/ leaving a room
   @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(client: Socket, room: string) {
-    client.leave(room);
-    client.emit('left', room);
+  handleLeaveRoom(client: Socket, @MessageBody() room: JoinLeaveRoomDto) {
+    client.leave(room.groupId);
+    client.emit('left', room.groupId);
   }
 
-  // @SubscribeMessage('updateChat')
-  // update(@MessageBody() updateChatDto: UpdateChatDto) {
-  //   return this.chatService.update(updateChatDto.id, updateChatDto);
-  // }
+  @SubscribeMessage('editMessage')
+  async updateMessage(@MessageBody() updateChatDto: UpdateMessageDto) {
+    return await this.chatService.updateMessage(updateChatDto);
+  }
 
-  // @SubscribeMessage('removeChat')
-  // remove(@MessageBody() id: number) {
-  //   return this.chatService.remove(id);
-  // }
+  //Delete a message - deleteMessage
+  @SubscribeMessage('deleteMessage')
+  async deleteMessage(@MessageBody() message: DeleteMessageDto) {
+    return await this.chatService.deleteMessage(message);
+  }
 }
