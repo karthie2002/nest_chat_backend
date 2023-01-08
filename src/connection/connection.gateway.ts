@@ -15,9 +15,7 @@ import { CreateGroupDto } from 'src/group/dto/create-group.dto';
     origin: '*',
   },
 })
-export class GatewayConnection
-  implements OnModuleInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class GatewayConnection implements OnModuleInit {
   @WebSocketServer()
   server: Server;
 
@@ -42,12 +40,12 @@ export class GatewayConnection
     });
   }
 
-  handleConnection() {
-    console.log('Conn handled!!');
-    this.server.emit('handleConn', 'connection handled');
-  }
-  handleDisconnect() {
-    console.log('disconnected!!');
-    this.server.emit('disconnect', 'disconnected from server');
-  }
+  // handleConnection() {
+  //   console.log('Conn handled!!');
+  //   this.server.emit('handleConn', 'connection handled');
+  // }
+  // handleDisconnect() {
+  //   console.log('disconnected!!');
+  //   this.server.emit('disconnect', 'disconnected from server');
+  // }
 }
