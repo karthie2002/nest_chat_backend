@@ -85,6 +85,7 @@ export class GroupService {
             select: {
               createdAt: true,
               content: true,
+              groupId: true,
             },
           },
         },
@@ -93,7 +94,7 @@ export class GroupService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2023') {
-          throw new WsException('Unknown error!!');
+          throw new WsException('No groups found!!');
         } else {
           throw new WsException('Unknown error!!');
         }
