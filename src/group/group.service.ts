@@ -99,6 +99,7 @@ export class GroupService {
     }
   }
 
+  // ! Redundancy - same as fetchAllMessages
   async fetchOneGroup(body: FetchOneGroupDto) {
     try {
       const groupData = await this.prismaService.group.findUniqueOrThrow({
@@ -126,7 +127,7 @@ export class GroupService {
     }
   }
 
-  // ! Messages in that grp to be deleted
+  // ! Yet to be done, Messages in that grp to be deleted
   //Delete one group - deleteGroup
   async deleteGroup(body: DeleteGroupDto) {
     try {
@@ -175,4 +176,34 @@ export class GroupService {
   // }
 
   async addUserToGroup(body: AddDelUserDto) {}
+
+  async delUserFromGroup(body: AddDelUserDto) {
+    const userData = await this.prismaService.user.findUniqueOrThrow({
+      where: {
+        id: body.userId,
+      },
+      select: {
+        groupIds: true,
+        id: true,
+        username: true,
+      },
+    });
+    if (userData.groupIds.includes(body.groupId)) {
+      const groupData = await this.prismaService.group.update({
+        where: {
+          id: body.groupId,
+        },
+        data: {
+          user: {
+            delete: {
+              id: body.userId,
+            },
+          },
+        },
+      });
+      return groupData;
+    } else {
+      throw new WsException('Cannot form multiple groups with the same users');
+    }
+  }
 }

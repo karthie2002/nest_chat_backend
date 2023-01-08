@@ -55,12 +55,13 @@ export class ChatGateway {
     client.emit('left', room.groupId);
   }
 
+  //Edit an already existing message
   @SubscribeMessage('editMessage')
   async updateMessage(@MessageBody() updateChatDto: UpdateMessageDto) {
     return await this.chatService.updateMessage(updateChatDto);
   }
 
-  //Delete a message - deleteMessage
+  //Delete a message
   @SubscribeMessage('deleteMessage')
   async deleteMessage(@MessageBody() message: DeleteMessageDto) {
     return await this.chatService.deleteMessage(message);

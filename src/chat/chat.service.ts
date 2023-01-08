@@ -68,8 +68,25 @@ export class ChatService {
     return messages;
   }
 
+  //Edit an already existing message - editMessage
   async updateMessage(updateChatDto: UpdateMessageDto) {
-    return await this.prismaService;
+    const messageData = await this.prismaService.message.update({
+      where: {
+        id: updateChatDto.messageId,
+      },
+      data: {
+        content: updateChatDto.updatedContent,
+      },
+      select: {
+        content: true,
+        createdAt: true,
+        id: true,
+        groupId: true,
+        userId: true,
+        msgRead: true,
+      },
+    });
+    return messageData;
   }
 
   //Delete a message - deleteMessage

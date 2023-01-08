@@ -97,13 +97,11 @@ export class UserService {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
           throw new HttpException(
-            [
-              { verified: false },
-              {
-                status: HttpStatus.FORBIDDEN,
-                message: ['Username invalid'],
-              },
-            ],
+            {
+              statusCode: HttpStatus.FORBIDDEN,
+              verified: false,
+              message: ['Username invalid'],
+            },
             HttpStatus.FORBIDDEN,
           );
         }

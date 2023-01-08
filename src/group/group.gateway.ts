@@ -46,4 +46,9 @@ export class GroupGateway {
   async addUserToGroup(@MessageBody() body: AddDelUserDto) {
     return await this.groupService.addUserToGroup(body);
   }
+
+  @SubscribeMessage('addUserToGroup')
+  async delUserFromGroup(@MessageBody() body: AddDelUserDto) {
+    return await this.groupService.delUserFromGroup(body);
+  }
 }
