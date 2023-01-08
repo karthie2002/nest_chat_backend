@@ -83,13 +83,11 @@ export class UserService {
       if (error instanceof HttpException) {
         if (error.getStatus() == HttpStatus.UNAUTHORIZED) {
           throw new HttpException(
-            [
-              { verified: false },
-              {
-                status: HttpStatus.UNAUTHORIZED,
-                message: ['Login failed'],
-              },
-            ],
+            {
+              statusCode: HttpStatus.UNAUTHORIZED,
+              verified: false,
+              message: ['Login failed'],
+            },
             HttpStatus.UNAUTHORIZED,
           );
         }

@@ -42,11 +42,13 @@ export class GroupGateway {
     return await this.groupService.deleteGroup(body);
   }
 
+  // ! to be changed
   @SubscribeMessage('addUserToGroup')
   async addUserToGroup(@MessageBody() body: AddDelUserDto) {
     return await this.groupService.addUserToGroup(body);
   }
 
+  // ! to be changed
   @SubscribeMessage('addUserToGroup')
   async delUserFromGroup(@MessageBody() body: AddDelUserDto) {
     return await this.groupService.delUserFromGroup(body);

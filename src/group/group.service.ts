@@ -175,8 +175,10 @@ export class GroupService {
   //   }
   // }
 
+  // ! Yet to be done
   async addUserToGroup(body: AddDelUserDto) {}
 
+  // ! Yet to be done
   async delUserFromGroup(body: AddDelUserDto) {
     const userData = await this.prismaService.user.findUniqueOrThrow({
       where: {
