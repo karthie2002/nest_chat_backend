@@ -50,7 +50,10 @@ export class ChatGateway {
 
   //Exiting from a group/ leaving a room
   @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(client: Socket, @MessageBody() room: JoinLeaveRoomDto) {
+  handleLeaveRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() room: JoinLeaveRoomDto,
+  ) {
     client.leave(room.groupId);
     client.emit('left', room.groupId);
   }

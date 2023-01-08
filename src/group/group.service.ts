@@ -177,7 +177,52 @@ export class GroupService {
   // }
 
   // ! Yet to be done
-  async addUserToGroup(body: AddDelUserDto) {}
+  async addUserToGroup(body: AddDelUserDto) {
+    // try {
+    //   const userData = await this.prismaService.user.findUniqueOrThrow({
+    //     where: {
+    //       id: body.userId,
+    //     },
+    //     select: {
+    //       groupIds: true,
+    //       id: true,
+    //       username: true,
+    //     },
+    //   });
+    //   if (userData.groupIds.includes(body.groupId)) {
+    //     const groupData = await this.prismaService.group.update({
+    //       where: {
+    //         id: body.groupId,
+    //       },
+    //       data: {
+    //         userIds: {
+    //           push: {
+    //             id: body.userId,
+    //           },
+    //         },
+    //         userJson: {
+    //           push: {
+    //             id: body.userId,
+    //           },
+    //         },
+    //       },
+    //     });
+    //     return groupData;
+    //   } else {
+    //     throw new WsException('error');
+    //   }
+    // } catch (error) {
+    //   if (error instanceof PrismaClientKnownRequestError) {
+    //     if (error.code === 'P2025') {
+    //       throw new WsException('User does not exist');
+    //     } else {
+    //       throw new WsException('Unknown error!!');
+    //     }
+    //   } else {
+    //     throw new WsException('Unknown error!!');
+    //   }
+    // }
+  }
 
   // ! Yet to be done
   // ! Dont use this endpoint
