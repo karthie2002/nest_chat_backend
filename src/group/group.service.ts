@@ -3,7 +3,7 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { WebSocketServer, WsException } from '@nestjs/websockets';
-import { FetchAllGroupsDto, FetchOneGroupDto } from './dto/fetch-group.dto';
+import { EditGroupDescDto, FetchAllGroupsDto } from './dto/fetch-group.dto';
 import { DeleteGroupDto } from './dto/delete-group.dto';
 import { AddDelUserDto } from './dto/users-group.dto';
 
@@ -100,32 +100,19 @@ export class GroupService {
     }
   }
 
-  // ! Redundancy - same as fetchAllMessages
-  async fetchOneGroup(body: FetchOneGroupDto) {
-    try {
-      const groupData = await this.prismaService.group.findUniqueOrThrow({
-        where: {
-          id: body.groupId,
-        },
-        select: {
-          groupName: true,
-          description: true,
-          messages: true,
-          userIds: true,
-        },
-      });
-      return groupData;
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2023') {
-          throw new WsException('Group does not exist');
-        } else {
-          throw new WsException('Unknown error!!');
-        }
-      } else {
-        throw new WsException('Unknown error!!');
-      }
-    }
+  async updateGroupDesc(body: EditGroupDescDto) {
+    const grpData = await this.prismaService.group.update({
+      where: {
+        id: body.groupId,
+      },
+      data: {
+        description: body.newGroupDesc,
+      },
+      select: {
+        description: true,
+      },
+    });
+    return grpData;
   }
 
   // ! Yet to be done, Messages in that grp to be deleted

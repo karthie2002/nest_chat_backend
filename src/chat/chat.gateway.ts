@@ -46,6 +46,14 @@ export class ChatGateway {
     console.log(room);
     client.join(room.groupId);
     client.emit('joined', room.groupId);
+
+    client.on('typing', (data) => {
+      if (data.typing == true) {
+        client.emit('display', data);
+      } else {
+        client.emit('display', data);
+      }
+    });
   }
 
   //Exiting from a group/ leaving a room

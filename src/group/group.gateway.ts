@@ -8,7 +8,7 @@ import { Server, Socket } from 'socket.io';
 import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { GatewayConnection } from 'src/connection/connection.gateway';
-import { FetchAllGroupsDto, FetchOneGroupDto } from './dto/fetch-group.dto';
+import { EditGroupDescDto, FetchAllGroupsDto } from './dto/fetch-group.dto';
 import { DeleteGroupDto } from './dto/delete-group.dto';
 import { AddDelUserDto } from './dto/users-group.dto';
 
@@ -31,15 +31,14 @@ export class GroupGateway {
     return await this.groupService.fetchAllGroups(userId);
   }
 
-  // ! Redundancy - same as fetchAllMessages
-  @SubscribeMessage('fetchOneGroup')
-  async fetchOneGroup(@MessageBody() body: FetchOneGroupDto) {
-    return await this.groupService.fetchOneGroup(body);
-  }
-
   @SubscribeMessage('deleteGroup')
   async deleteGroup(@MessageBody() body: DeleteGroupDto) {
     return await this.groupService.deleteGroup(body);
+  }
+
+  @SubscribeMessage('updateGroupDesc')
+  async updateGroupDesc(@MessageBody() body: EditGroupDescDto) {
+    return await this.groupService.updateGroupDesc(body);
   }
 
   // ! to be changed

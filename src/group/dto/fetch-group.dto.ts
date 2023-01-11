@@ -9,16 +9,15 @@ export class FetchAllGroupsDto {
 }
 
 // ! not used
-export class FetchOneGroupDto {
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(24)
-  @MinLength(24)
-  userId: string;
-
+export class EditGroupDescDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(24)
   @MinLength(24)
   groupId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
+  newGroupDesc: string;
 }
