@@ -5,7 +5,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { WebSocketServer, WsException } from '@nestjs/websockets';
 import { EditGroupDescDto, FetchAllGroupsDto } from './dto/fetch-group.dto';
 import { DeleteGroupDto } from './dto/delete-group.dto';
-import { AddDelUserDto } from './dto/users-group.dto';
+import { AddDelUserDto, FetchUsersDto } from './dto/users-group.dto';
 
 interface ConnectUser {
   id: string;
@@ -113,6 +113,23 @@ export class GroupService {
       },
     });
     return grpData;
+  }
+
+  async fetchUsers(groupId: FetchUsersDto) {
+    const usersData = await this.prismaService.group.findUniqueOrThrow({
+      where: {
+        id: groupId.groupId,
+      },
+      select: {
+        userIds: true,
+        user: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
+    return usersData;
   }
 
   // ! Yet to be done, Messages in that grp to be deleted

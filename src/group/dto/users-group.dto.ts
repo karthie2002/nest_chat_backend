@@ -12,3 +12,10 @@ export class AddDelUserDto {
   @MinLength(24)
   groupId: string;
 }
+export class FetchUsersDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(24)
+  @MinLength(24)
+  groupId: string;
+}

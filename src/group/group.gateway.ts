@@ -10,7 +10,8 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { GatewayConnection } from 'src/connection/connection.gateway';
 import { EditGroupDescDto, FetchAllGroupsDto } from './dto/fetch-group.dto';
 import { DeleteGroupDto } from './dto/delete-group.dto';
-import { AddDelUserDto } from './dto/users-group.dto';
+import { AddDelUserDto, FetchUsersDto } from './dto/users-group.dto';
+import { Param } from '@nestjs/common';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class GroupGateway {
@@ -34,6 +35,11 @@ export class GroupGateway {
   @SubscribeMessage('deleteGroup')
   async deleteGroup(@MessageBody() body: DeleteGroupDto) {
     return await this.groupService.deleteGroup(body);
+  }
+
+  @SubscribeMessage('fetchUsers')
+  async fetchUsers(@MessageBody() groupId: FetchUsersDto) {
+    return await this.groupService.fetchUsers(groupId);
   }
 
   @SubscribeMessage('updateGroupDesc')
