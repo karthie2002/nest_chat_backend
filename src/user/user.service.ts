@@ -42,7 +42,7 @@ export class UserService {
     const fetchUsers = await this.prismaService.user.findMany({
       where: {
         NOT: {
-          id: userId,
+          id: { equals: userId },
         },
       },
       select: {

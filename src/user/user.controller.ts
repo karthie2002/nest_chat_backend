@@ -26,7 +26,7 @@ export class UserController {
   }
 
   @Get('fetchAllUsers/:id')
-  async fetchAllUsers(@Param() userId) {
+  async fetchAllUsers(@Param('id') userId: string) {
     return await this.userService.fetchAllUsers(userId);
   }
 }
