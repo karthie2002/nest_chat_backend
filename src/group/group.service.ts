@@ -100,6 +100,7 @@ export class GroupService {
     }
   }
 
+  // !
   async updateGroupDesc(body: EditGroupDescDto) {
     const grpData = await this.prismaService.group.update({
       where: {
@@ -116,20 +117,33 @@ export class GroupService {
   }
 
   async fetchUsers(groupId: FetchUsersDto) {
-    const usersData = await this.prismaService.group.findUniqueOrThrow({
-      where: {
-        id: groupId.groupId,
-      },
-      select: {
-        userIds: true,
-        user: {
-          select: {
-            username: true,
+    try {
+      const usersData = await this.prismaService.group.findUniqueOrThrow({
+        where: {
+          id: groupId.groupId,
+        },
+        select: {
+          // userIds: true,
+          user: {
+            select: {
+              username: true,
+              id: true,
+            },
           },
         },
-      },
-    });
-    return usersData;
+      });
+      return usersData;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2023') {
+          throw new WsException('No users in group!!');
+        } else {
+          throw new WsException('Invalid request');
+        }
+      } else {
+        throw new WsException('Request not processed');
+      }
+    }
   }
 
   // ! Yet to be done, Messages in that grp to be deleted
