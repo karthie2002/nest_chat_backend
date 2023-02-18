@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,8 +25,8 @@ export class UserController {
     return await this.userService.signInUser(user);
   }
 
-  @Get('fetchAllUsers')
-  async fetchAllUsers() {
-    return await this.userService.fetchAllUsers();
+  @Get('fetchAllUsers/:id')
+  async fetchAllUsers(@Param() userId) {
+    return await this.userService.fetchAllUsers(userId);
   }
 }

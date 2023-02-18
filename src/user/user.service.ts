@@ -38,8 +38,13 @@ export class UserService {
 
   // ! last received msg to be added
   //Get all users (for homepage display) - user/fetchAllUsers
-  async fetchAllUsers() {
+  async fetchAllUsers(userId: string) {
     const fetchUsers = await this.prismaService.user.findMany({
+      where: {
+        NOT: {
+          id: userId,
+        },
+      },
       select: {
         username: true,
         id: true,
