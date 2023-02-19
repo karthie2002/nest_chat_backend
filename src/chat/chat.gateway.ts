@@ -9,7 +9,11 @@ import {
 import { Socket, Server } from 'socket.io';
 
 import { ChatService } from './chat.service';
-import { CreateChatDto, JoinLeaveRoomDto } from './dto/create-chat.dto';
+import {
+  CreateChatDto,
+  JoinLeaveRoomDto,
+  TypingDto,
+} from './dto/create-chat.dto';
 import { DeleteMessageDto } from './dto/delete-chat.dto';
 import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
 import { UpdateMessageDto, MessageReadDto } from './dto/update-chat.dto';
@@ -46,16 +50,16 @@ export class ChatGateway {
     console.log(room);
     client.join(room.groupId);
     client.emit('joined', room.groupId);
-
-    client.on('typing', (data) => {
-      if (data.typing == true) {
-        client.emit('display', data);
-      } else {
-        client.emit('display', data);
-      }
-    });
+    console.log('anyone there');
   }
-
+  @SubscribeMessage('typing')
+  handleType(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() details: TypingDto,
+  ) {
+    client.broadcast.to(details.groupId).emit("typing", details);
+    console.log(details);
+  }
   //Exiting from a group/ leaving a room
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(

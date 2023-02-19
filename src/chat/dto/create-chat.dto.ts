@@ -1,4 +1,10 @@
-import { MaxLength, MinLength, IsString, IsNotEmpty } from 'class-validator';
+import {
+  MaxLength,
+  MinLength,
+  IsString,
+  IsNotEmpty,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateChatDto {
   @IsString()
@@ -25,4 +31,21 @@ export class JoinLeaveRoomDto {
   @MaxLength(24)
   @MinLength(24)
   groupId: string;
+}
+export class TypingDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(24)
+  @MinLength(24)
+  groupId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(24)
+  @MinLength(24)
+  userId: string;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  isTyping: boolean;
 }
