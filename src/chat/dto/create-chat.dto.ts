@@ -32,6 +32,7 @@ export class JoinLeaveRoomDto {
   @MinLength(24)
   groupId: string;
 }
+
 export class TypingDto {
   @IsString()
   @IsNotEmpty()

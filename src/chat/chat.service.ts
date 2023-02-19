@@ -56,20 +56,33 @@ export class ChatService {
   async fetchAllMessages(fetchAllMessagesDto: FetchAllMessagesDto) {
     try {
       return await this.prismaService.$transaction(async (tx) => {
+        // const readMessagesData = await tx.message.updateMany({
+        //   where: {
+        //     AND: [{ groupId: fetchAllMessagesDto.groupId }, { msgRead: false }],
+        //   },
+        //   data: {
+        //     msgRead: true,
+        //   },
+        // });
+
         const readMessagesData = await tx.message.updateMany({
           where: {
             AND: [{ groupId: fetchAllMessagesDto.groupId }, { msgRead: false }],
+            NOT: {
+              userId: fetchAllMessagesDto.userId,
+            },
           },
           data: {
             msgRead: true,
           },
         });
         const allMessages = await tx.message.findMany({
+          take: 25,
           where: {
             groupId: fetchAllMessagesDto.groupId,
           },
           orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
           },
           select: {
             content: true,

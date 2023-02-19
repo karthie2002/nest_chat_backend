@@ -81,6 +81,7 @@ export class GroupService {
               createdAt: true,
               content: true,
               groupId: true,
+              msgRead: true,
             },
           },
         },

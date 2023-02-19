@@ -47,19 +47,19 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() room: JoinLeaveRoomDto,
   ) {
-    console.log(room);
     client.join(room.groupId);
     client.emit('joined', room.groupId);
-    console.log('anyone there');
   }
+
   @SubscribeMessage('typing')
   handleType(
     @ConnectedSocket() client: Socket,
     @MessageBody() details: TypingDto,
   ) {
-    client.broadcast.to(details.groupId).emit("typing", details);
+    client.broadcast.to(details.groupId).emit('typing', details);
     console.log(details);
   }
+
   //Exiting from a group/ leaving a room
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(
