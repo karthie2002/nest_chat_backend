@@ -103,18 +103,26 @@ export class GroupService {
 
   // !
   async updateGroupDesc(body: EditGroupDescDto) {
-    const grpData = await this.prismaService.group.update({
-      where: {
-        id: body.groupId,
-      },
-      data: {
-        description: body.newGroupDesc,
-      },
-      select: {
-        description: true,
-      },
-    });
-    return grpData;
+    try {
+      const grpData = await this.prismaService.group.update({
+        where: {
+          id: body.groupId,
+        },
+        data: {
+          description: body.newGroupDesc,
+        },
+        select: {
+          description: true,
+        },
+      });
+      return grpData;
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new WsException('Could not update description!!');
+      } else {
+        throw new WsException('Unknown error!!');
+      }
+    }
   }
 
   async fetchUsers(groupId: FetchUsersDto) {
