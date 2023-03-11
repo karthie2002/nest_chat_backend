@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { WebSocketServer, WsException } from '@nestjs/websockets';
+import { WsException } from '@nestjs/websockets';
 import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
 import { DeleteMessageDto } from './dto/delete-chat.dto';
-import { UpdateMessageDto, MessageReadDto } from './dto/update-chat.dto';
-import * as CryptoJS from 'crypto-js';
+import { UpdateMessageDto } from './dto/update-chat.dto';
+import { RedisService } from 'src/redis/redis.service';
+// import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class ChatService {
   client: any;
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly redisService: RedisService,
+  ) {}
 
   //Sending a new message to a group(room) - chatToServer
   async createMessage(message: CreateChatDto) {
@@ -78,27 +82,38 @@ export class ChatService {
             msgRead: true,
           },
         });
-        const allMessages = await tx.message.findMany({
-          take: 25,
-          where: {
-            groupId: fetchAllMessagesDto.groupId,
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-          select: {
-            content: true,
-            createdAt: true,
-            msgRead: true,
-            user: {
-              select: {
-                id: true,
-                username: true,
+        const getCachedData = await this.redisService.getCacheStore(
+          `Group:${fetchAllMessagesDto.groupId}`,
+        );
+        if (getCachedData == null) {
+          const allMessages = await tx.message.findMany({
+            take: 25,
+            where: {
+              groupId: fetchAllMessagesDto.groupId,
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            select: {
+              content: true,
+              createdAt: true,
+              msgRead: true,
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                },
               },
             },
-          },
-        });
-        return { readMessagesData, allMessages };
+          });
+          await this.redisService.createCacheStore(
+            `Group:${fetchAllMessagesDto.groupId}`,
+            allMessages,
+          );
+          return { readMessagesData, allMessages, from: 'mongo' };
+        }
+        const allMessages = getCachedData;
+        return { readMessagesData, allMessages, from: 'redis' };
       });
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {

@@ -2,12 +2,11 @@ import {
   WebSocketGateway,
   SubscribeMessage,
   MessageBody,
-  OnGatewayInit,
   WebSocketServer,
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-
+import { RedisService } from 'src/redis/redis.service';
 import { ChatService } from './chat.service';
 import {
   CreateChatDto,
@@ -16,18 +15,22 @@ import {
 } from './dto/create-chat.dto';
 import { DeleteMessageDto } from './dto/delete-chat.dto';
 import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
-import { UpdateMessageDto, MessageReadDto } from './dto/update-chat.dto';
+import { UpdateMessageDto } from './dto/update-chat.dto';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway {
   @WebSocketServer() wss: Server;
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly redisService: RedisService,
+  ) {}
 
   //Sending a new message to a group(room)
   @SubscribeMessage('chatToServer')
   async handleMessage(@MessageBody() message: CreateChatDto) {
     const data = await this.chatService.createMessage(message);
     this.wss.sockets.to(message.groupId).emit('chatToClient', data);
+    this.redisService.storeRecentChat(`Group:${message.groupId}`, data);
   }
 
   //Fetches all the messages in a group(room) - fetchAllMessages
