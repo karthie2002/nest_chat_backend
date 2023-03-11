@@ -16,7 +16,12 @@ export class UserService {
           password: createUserDto.password,
         },
       });
-      return { created: true, newUserData };
+      return {
+        verified: true,
+        userId: newUserData.id,
+        username: newUserData.username,
+        createdAt: newUserData.createdAt,
+      };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
