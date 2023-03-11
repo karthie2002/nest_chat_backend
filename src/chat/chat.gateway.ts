@@ -57,7 +57,7 @@ export class ChatGateway {
     @MessageBody() details: TypingDto,
   ) {
     client.broadcast.to(details.groupId).emit('typing', details);
-    console.log(details);
+    // console.log(details);
   }
 
   //Exiting from a group/ leaving a room
