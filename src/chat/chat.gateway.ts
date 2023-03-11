@@ -76,10 +76,10 @@ export class ChatGateway {
     return await this.chatService.updateMessage(updateChatDto);
   }
 
-  @SubscribeMessage('adminEnc')
-  async encryption() {
-    return await this.chatService.encryption();
-  }
+  // @SubscribeMessage('adminEnc')
+  // async encryption() {
+  //   return await this.chatService.encryption();
+  // }
 
   // @SubscribeMessage('adminDec')
   // async decryption() {

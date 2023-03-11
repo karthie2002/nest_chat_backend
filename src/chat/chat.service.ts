@@ -6,7 +6,7 @@ import { WebSocketServer, WsException } from '@nestjs/websockets';
 import { FetchAllMessagesDto } from './dto/fetch-chat.dto';
 import { DeleteMessageDto } from './dto/delete-chat.dto';
 import { UpdateMessageDto, MessageReadDto } from './dto/update-chat.dto';
-import CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class ChatService {
@@ -158,41 +158,38 @@ export class ChatService {
   // async messageRead(messageReadDto: MessageReadDto) {
   //   return await this.prismaService;
   // }
-  realEnc(message: string, groupId: string) {
-    let plainText = message;
-    let key = CryptoJS.enc.Utf8.parse(groupId);
-    let iv = CryptoJS.enc.Base64.parse('AAAAAAAAAAAAAAAAAAAAAA==');
-    console.log(plainText);
-    console.log(key.toString(CryptoJS.enc.Base64));
-    console.log(iv.toString(CryptoJS.enc.Base64));
-    let encrypted = CryptoJS.AES.encrypt(plainText, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      // padding: CryptoJS.pad.Pkcs7,
-    });
-    return encrypted.toString();
-  }
-  async encryption() {
-    const data = await this.prismaService.message.findMany({
-      where: {
-        groupId: '63f1bbb55eb1b2332baae13c',
-      },
-      select: {
-        content: true,
-        groupId: true,
-        id: true,
-      },
-    });
-    data.forEach(async (item) => {
-      await this.prismaService.message.updateMany({
-        where: {
-          id: item.id,
-        },
-        data: {
-          content: this.realEnc(item.content, item.groupId),
-        },
-      });
-    });
-    return data;
-  }
+  // realEnc(message: string, groupId: string) {
+  //   let plainText = message;
+  //   let key = CryptoJS.enc.Utf8.parse(groupId);
+  //   let iv = CryptoJS.enc.Base64.parse('AAAAAAAAAAAAAAAAAAAAAA==');
+  //   let encrypted = CryptoJS.AES.encrypt(plainText, key, {
+  //     iv: iv,
+  //     mode: CryptoJS.mode.CBC,
+  //     // padding: CryptoJS.pad.Pkcs7,
+  //   });
+  //   return encrypted.toString();
+  // }
+  // async encryption() {
+  //   const data = await this.prismaService.message.findMany({
+  //     select: {
+  //       content: true,
+  //       groupId: true,
+  //       id: true,
+  //     },
+  //   });
+  //   data.forEach(async (item) => {
+  //     const newContent = this.realEnc(item.content, item.groupId);
+  //     // console.log(newContent);
+  //     const smt = await this.prismaService.message.update({
+  //       where: {
+  //         id: item.id,
+  //       },
+  //       data: {
+  //         content: newContent
+  //       },
+  //     });
+  //     console.log(smt);
+  //   });
+  //   return data.length;
+  // }
 }
