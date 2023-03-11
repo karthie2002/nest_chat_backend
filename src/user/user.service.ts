@@ -16,13 +16,19 @@ export class UserService {
           password: createUserDto.password,
         },
       });
-      return { created: true, newUserData };
+      return {
+        verified: true,
+        userId: newUserData.id,
+        username: newUserData.username,
+        createdAt: newUserData.createdAt,
+      };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new HttpException(
             {
-              status: HttpStatus.NOT_FOUND,
+              statusCode: HttpStatus.NOT_FOUND,
+              verified: false,
               message: ['User already exists'],
             },
             HttpStatus.NOT_FOUND,
