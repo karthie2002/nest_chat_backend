@@ -27,7 +27,8 @@ export class UserService {
         if (error.code === 'P2002') {
           throw new HttpException(
             {
-              status: HttpStatus.NOT_FOUND,
+              statusCode: HttpStatus.NOT_FOUND,
+              verified: false,
               message: ['User already exists'],
             },
             HttpStatus.NOT_FOUND,
