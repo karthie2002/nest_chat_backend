@@ -77,9 +77,14 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('adminEnc')
-  async encryption(@MessageBody() updateChatDto: UpdateMessageDto) {
-    return await this.chatService.encryption(updateChatDto);
+  async encryption() {
+    return await this.chatService.encryption();
   }
+
+  // @SubscribeMessage('adminDec')
+  // async decryption() {
+  //   return await this.chatService.decryption();
+  // }
 
   //Delete a message
   @SubscribeMessage('deleteMessage')
