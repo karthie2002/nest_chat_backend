@@ -156,4 +156,6 @@ export class ChatService {
   // async messageRead(messageReadDto: MessageReadDto) {
   //   return await this.prismaService;
   // }
+
+  async encryption(updateChatDto: UpdateMessageDto) {}
 }

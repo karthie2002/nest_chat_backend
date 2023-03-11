@@ -55,7 +55,7 @@ export class GroupService {
           throw new WsException('Invalid user');
         }
       } else {
-        throw error;
+        throw new WsException('Unknown error');
       }
     }
   }
