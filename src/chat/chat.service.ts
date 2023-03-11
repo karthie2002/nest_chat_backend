@@ -85,7 +85,7 @@ export class ChatService {
         const getCachedData = await this.redisService.getCacheStore(
           `Group:${fetchAllMessagesDto.groupId}`,
         );
-        if (getCachedData == null) {
+        if (getCachedData == null ) { //|| getCachedData.length == 0
           const allMessages = await tx.message.findMany({
             take: 25,
             where: {

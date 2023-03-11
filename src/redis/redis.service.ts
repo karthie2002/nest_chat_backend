@@ -22,10 +22,13 @@ export class RedisService extends Redis {
     let json: CacheMessage[] = JSON.parse(
       (await this.call('JSON.GET', storeName)) as string,
     );
-    if (json == null) {
+    console.log(json);
+    if (json == null || json.length == 0) {
       json = [storeData];
     } else {
       json = [storeData, ...json];
+    }
+    if (json.length > 25) {
       json.pop();
     }
 
