@@ -32,7 +32,6 @@ export class ChatGateway {
     this.wss.sockets.to(message.groupId).emit('chatToClient', data);
     this.redisService.storeRecentChat(`Group:${message.groupId}`, data);
   }
-
   //Fetches all the messages in a group(room) - fetchAllMessages
   @SubscribeMessage('fetchAllMessages')
   async findAll(
