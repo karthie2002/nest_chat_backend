@@ -3,6 +3,6 @@ import { ConnectionService } from './connection.service';
 import { GatewayConnection } from './connection.gateway';
 
 @Module({
-  providers: [GatewayConnection, ConnectionService]
+  providers: [GatewayConnection, ConnectionService],
 })
 export class ConnectionModule {}
