@@ -1,11 +1,19 @@
 import { Global, OnModuleInit } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets/interfaces';
 
 import { Server, Socket } from 'socket.io';
+import { ConnectionService } from './connection.service';
+import { UserOnlineDto } from './dto/user-online.dto';
 
 @Global()
 @WebSocketGateway({
@@ -20,7 +28,7 @@ export class GatewayConnection
   server: Server;
 
   public clientIds: Object;
-  constructor() {
+  constructor(private readonly connectionService: ConnectionService) {
     this.clientIds = new Object();
   }
 
@@ -47,5 +55,25 @@ export class GatewayConnection
   handleDisconnect() {
     console.log('disconnected!!');
     this.server.emit('disconnected', 'disconnected from server');
+  }
+  @SubscribeMessage('onlineUser')
+  async UserOnline(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() onlineBool: UserOnlineDto,
+  ) {
+    const res = await this.connectionService.UserOnline(onlineBool);
+    res.group.forEach((item) => {
+      client.broadcast.to(item.id).emit('onlineStatus', item.user);
+    });
+  }
+  @SubscribeMessage('offlineUser')
+  async UserOffline(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() onlineBool: UserOnlineDto,
+  ) {
+    const res = await this.connectionService.UserOffline(onlineBool);
+    res.group.forEach((item) => {
+      client.broadcast.to(item.id).emit('onlineStatus', item.user);
+    });
   }
 }

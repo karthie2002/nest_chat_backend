@@ -14,10 +14,12 @@ model User {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   username  String    @unique
   password  String
+  userDesc  String?
   messages  Message[]
   group     Group[]   @relation(fields: [groupIds], references: [id])
   groupIds  String[]  @db.ObjectId
   createdAt DateTime  @default(now())
+  online    Boolean?   @default(false)
 }
 
 model Group {

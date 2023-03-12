@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
+
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
@@ -41,7 +42,7 @@ export class UserService {
       }
     }
   }
-
+ 
   // ! last received msg to be added
   //Get all users (for homepage display) - user/fetchAllUsers
   async fetchAllUsers(userId: string) {
